@@ -1,2 +1,2 @@
 # gamehub.github.io
-Gamehub!
+Gamehub Je nejlepší česká stránka na stahování her!
