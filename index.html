@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameHub | Stahování her</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --primary-dark: #6a1cb0;
+            --primary-light: #9d4edd;
+            --secondary-color: #121212;
+            --accent-color: #ff00ff;
+            --text-light: #f0f0f0;
+            --text-dark: #222;
+            --card-bg: rgba(26, 26, 46, 0.9);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--primary-dark), #4a0080);
+            --shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--secondary-color);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--primary-color);
+        }
+
+        /* Menu */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .nav-links a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 5px 10px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            border: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .info-table tr {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .info-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .info-table td {
+            padding: 15px 10px;
+        }
+
+        .info-table td:first-child {
+            font-weight: 600;
+            color: var(--primary-light);
+            width: 150px;
+        }
+
+        /* Hero */
+        .hero {
+            margin-top: 80px;
+            padding: 60px 0;
+            background: var(--gradient);
+            border-radius: 0 0 40px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 0, 255, 0.3);
+        }
+
+        /* Games */
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 50px 0 30px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+            border-color: var(--primary-color);
+        }
+
+        .game-img {
+            height: 180px;
+            width: 100%;
+            background: linear-gradient(to bottom right, #4a0080, #6a1cb0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .game-card:hover .game-img img {
+            transform: scale(1.1);
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .game-content {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-version {
+            background: var(--primary-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .game-size {
+            color: var(--accent-color);
+        }
+
+        .game-description {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .download-btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            padding: 50px 0 20px;
+            margin-top: 60px;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+
+        /* Search Results */
+        .search-results {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+            position: absolute;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-item:hover {
+            background: rgba(138, 43, 226, 0.2);
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(18, 18, 18, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 20px;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .nav-links a {
+                width: 100%;
+                text-align: center;
+                padding: 12px;
+            }
+            
+            .search-bar {
+                width: 100%;
+                max-width: 400px;
+                margin-top: 20px;
+                order: 3;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                GameHub
+            </div>
+            
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="nav-links" id="navLinks">
+                <a href="#" class="active"><i class="fas fa-home"></i> Domů</a>
+                <a href="#" id="aboutBtn"><i class="fas fa-info-circle"></i> O nás</a>
+                <a href="#" id="supportBtn"><i class="fas fa-headset"></i> Podpora</a>
+                
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Hledat hry...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Modal O nás -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> O nás</h2>
+                <button class="close-modal" id="closeAbout">&times;</button>
+            </div>
+            <table class="info-table">
+                <tr>
+                    <td>Developer:</td>
+                    <td>Ricisek</td>
+                </tr>
+                <tr>
+                    <td>Rok založení:</td>
+                    <td>2024</td>
+                </tr>
+                <tr>
+                    <td>Mise:</td>
+                    <td>Poskytovat bezpečné a rychlé stahování her</td>
+                </tr>
+                <tr>
+                    <td>Kontakt:</td>
+                    <td>ricisek@gamehub.cz</td>
+                </tr>
+                <tr>
+                    <td>Discord:</td>
+                    <td>Připravujeme...</td>
+                </tr>
+                <tr>
+                    <td>Verze stránky:</td>
+                    <td>2.0.1</td>
+                </tr>
+                <tr>
+                    <td>Technologie:</td>
+                    <td>HTML5, CSS3, JavaScript</td>
+                </tr>
+                <tr>
+                    <td>Hosting:</td>
+                    <td>GitHub Pages</td>
+                </tr>
+                <tr>
+                    <td>Poslední update:</td>
+                    <td id="currentDate"></td>
+                </tr>
+            </table>
+            <p style="color: var(--accent-color); font-style: italic; text-align: center;">
+                <i class="fas fa-heart"></i> Vytvořeno s vášní pro hry a komunitou
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal Podpora -->
+    <div class="modal" id="supportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-headset"></i> Podpora</h2>
+                <button class="close-modal" id="closeSupport">&times;</button>
+            </div>
+            <table class="info-table">
+                <tr>
+                    <td>Email podpora:</td>
+                    <td>support@gamehub.cz</td>
+                </tr>
+                <tr>
+                    <td>Reakční doba:</td>
+                    <td>24-48 hodin</td>
+                </tr>
+                <tr>
+                    <td>Discord server:</td>
+                    <td>Bude brzy spuštěn!</td>
+                </tr>
+                <tr>
+                    <td>FAQ sekce:</td>
+                    <td>Připravujeme</td>
+                </tr>
+                <tr>
+                    <td>Návody:</td>
+                    <td>Jak instalovat hry</td>
+                </tr>
+                <tr>
+                    <td>Rychlá pomoc:</td>
+                    <td>Kontaktuj nás emailem</td>
+                </tr>
+                <tr>
+                    <td>Comunity:</td>
+                    <td>Reddit: r/GameHubCZ</td>
+                </tr>
+                <tr>
+                    <td>Telegram:</td>
+                    <td>@GameHubCZ</td>
+                </tr>
+            </table>
+            <div style="background: rgba(138, 43, 226, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                <h4 style="color: var(--accent-color); margin-bottom: 10px;">
+                    <i class="fas fa-exclamation-circle"></i> Důležité informace
+                </h4>
+                <p style="font-size: 0.9rem;">
+                    1. Všechny hry jsou pro vzdělávací účely<br>
+                    2. Podporujeme pouze legální obsah<br>
+                    3. Při problémy s instalací napište na support
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Stáhni si nejlepší hry zdarma</h1>
+            <p>Rychlé servery, předinstalované hry, žádné čekání</p>
+            
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="trendingBtn">
+                    <i class="fas fa-bolt"></i> Zobrazit nejstahovanější
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">Nejnovější hry</h2>
+        
+        <div class="games-grid" id="gamesGrid">
+            <!-- Games will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">GameHub</div>
+                    <p>Nejrychlejší download her na českém internetu. Všechny hry jsou testované a připravené ke spuštění.</p>
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <a href="#" style="color: white; font-size: 1.3rem;">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" style="color: white; font-size: 1.3rem;">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" style="color: white; font-size: 1.3rem;">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3 style="color: white; margin-bottom: 15px;">Rychlé odkazy</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="#" style="color: #aaa; text-decoration: none;">Domů</a></li>
+                        <li><a href="#" id="aboutFooter" style="color: #aaa; text-decoration: none;">O nás</a></li>
+                        <li><a href="#" id="supportFooter" style="color: #aaa; text-decoration: none;">Podpora</a></li>
+                        <li><a href="#" style="color: #aaa; text-decoration: none;">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2024 GameHub by Ricisek | Všechna práva vyhrazena</p>
+                <p style="margin-top: 5px; font-size: 0.8rem;">Poslední update: <span id="footerDate"></span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data her
+        const games = [
+            {
+                id: 1,
+                name: "Lethal Company",
+                version: "v50",
+                developer: "Zeekerss",
+                size: "1.2 GB",
+                description: "Kooperativní horror survival hra s vesmírnou tematikou.",
+                image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                downloadLink: "#"
+            },
+            {
+                id: 2,
+                name: "Geometry Dash",
+                version: "v2.2",
+                developer: "RobTop Games",
+                size: "256 MB",
+                description: "Rytmická platformová hra s náročnými úrovněmi.",
+                image: "https://images.unsplash.com/photo-1632501641765-e568d28b001f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                downloadLink: "#"
+            },
+            {
+                id: 3,
+                name: "Assetto Corsa",
+                version: "v1.16.4",
+                developer: "Kunos Simulazioni",
+                size: "15.8 GB",
+                description: "Realistický závodní simulátor s pokročilou fyzikou.",
+                image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                downloadLink: "#"
+            },
+            {
+                id: 4,
+                name: "Baldur's Gate 3",
+                version: "v4.1.1",
+                developer: "Larian Studios",
+                size: "122 GB",
+                description: "Oceněná RPG hra roku 2023 s hlubokým příběhem.",
+                image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                downloadLink: "#"
+            },
+            {
+                id: 5,
+                name: "Cyberpunk 2077",
+                version: "v2.1",
+                developer: "CD Projekt Red",
+                size: "86 GB",
+                description: "Cyberpunk RPG ve světě Night City s DLC Phantom Liberty.",
+                image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                downloadLink: "#"
+            },
+            {
+                id: 6,
+                name: "Minecraft",
+                version: "1.20.4",
+                developer: "Mojang",
+                size: "1 GB",
+                description: "Sandbox hra s nekonečnými možnostmi tvorby.",
+                image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                downloadLink: "#"
+            }
+        ];
+
+        // DOM Elements
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        const aboutModal = document.getElementById('aboutModal');
+        const supportModal = document.getElementById('supportModal');
+        const gamesGrid = document.getElementById('gamesGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const currentDate = document.getElementById('currentDate');
+        const footerDate = document.getElementById('footerDate');
+
+        // Set current date
+        const now = new Date();
+        const formattedDate = `${now.getDate()}. ${now.getMonth() + 1}. ${now.getFullYear()}`;
+        currentDate.textContent = formattedDate;
+        footerDate.textContent = formattedDate;
+
+        // Mobile menu toggle
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Modal functions
+        function openModal(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event listeners for modals
+        document.getElementById('aboutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(aboutModal);
+        });
+
+        document.getElementById('supportBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(supportModal);
+        });
+
+        document.getElementById('aboutFooter').addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(aboutModal);
+        });
+
+        document.getElementById('supportFooter').addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(supportModal);
+        });
+
+        document.getElementById('closeAbout').addEventListener('click', () => {
+            closeModal(aboutModal);
+        });
+
+        document.getElementById('closeSupport').addEventListener('click', () => {
+            closeModal(supportModal);
+        });
+
+        // Close modal on outside click
+        [aboutModal, supportModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal);
+                }
+            });
+        });
+
+        // Load games
+        function loadGames() {
+            gamesGrid.innerHTML = '';
+            games.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = `
+                    <div class="game-img">
+                        <div class="game-badge">${game.version}</div>
+                        <img src="${game.image}" alt="${game.name}" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
+                    </div>
+                    <div class="game-content">
+                        <div class="game-title">
+                            <span>${game.name}</span>
+                            <span class="game-version">${game.version}</span>
+                        </div>
+                        <div class="game-info">
+                            <span><i class="fas fa-user"></i> ${game.developer}</span>
+                            <span class="game-size"><i class="fas fa-hdd"></i> ${game.size}</span>
+                        </div>
+                        <p class="game-description">${game.description}</p>
+                        <button class="download-btn" data-game="${game.name}">
+                            <i class="fas fa-download"></i> Stáhnout
+                        </button>
+                    </div>
+                `;
+                gamesGrid.appendChild(gameCard);
+            });
+
+            // Add download button events
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const gameName = this.getAttribute('data-game');
+                    showDownloadModal(gameName);
+                });
+            });
+        }
+
+        // Download modal
+        function showDownloadModal(gameName) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-download"></i> Stahování: ${gameName}</h2>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <p>Vyberte server pro stažení:</p>
+                    <div style="display: grid; gap: 10px; margin-top: 20px;">
+                        <button class="download-btn" data-server="MediaFire">
+                            <i class="fas fa-cloud-download-alt"></i> MediaFire (Doporučeno)
+                        </button>
+                        <button class="download-btn" data-server="GoogleDrive">
+                            <i class="fab fa-google-drive"></i> Google Drive
+                        </button>
+                        <button class="download-btn" data-server="MEGA">
+                            <i class="fas fa-database"></i> MEGA
+                        </button>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 0.9rem; color: #aaa;">
+                        <i class="fas fa-info-circle"></i> Po kliknutí budete přesměrováni na download
+                    </p>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Close modal
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+
+            // Server selection
+            modal.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const server = this.getAttribute('data-server');
+                    alert(`Stahování ${gameName} z ${server}...\n(Toto je demo, reálný link bude implementován)`);
+                    document.body.removeChild(modal);
+                });
+            });
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            searchResults.innerHTML = '';
+            
+            if (query.length > 1) {
+                const filtered = games.filter(game => 
+                    game.name.toLowerCase().includes(query) ||
+                    game.developer.toLowerCase().includes(query) ||
+                    game.description.toLowerCase().includes(query)
+                );
+                
+                if (filtered.length > 0) {
+                    searchResults.classList.add('active');
+                    filtered.forEach(game => {
+                        const item = document.createElement('div');
+                        item.className = 'search-item';
+                        item.innerHTML = `
+                            <div style="font-weight: 600;">${game.name}</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">${game.developer} • ${game.size}</div>
+                        `;
+                        item.addEventListener('click', () => {
+                            searchInput.value = game.name;
+                            searchResults.classList.remove('active');
+                            // Scroll to game
+                            alert(`Vyhledáno: ${game.name}`);
+                        });
+                        searchResults.appendChild(item);
+                    });
+                } else {
+                    searchResults.classList.add('active');
+                    searchResults.innerHTML = '<div class="search-item">Žádné výsledky</div>';
+                }
+            } else {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // Close search when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // Search button
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                alert(`Hledám: "${query}"\n(Funkční vyhledávání bude implementováno)`);
+                searchInput.value = '';
+                searchResults.classList.remove('active');
+            }
+        });
+
+        // Trending button
+        document.getElementById('trendingBtn').addEventListener('click', () => {
+            alert('Načítám nejstahovanější hry...\n(Funkce bude brzy dostupná)');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGames();
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 900) {
+                    navLinks.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
